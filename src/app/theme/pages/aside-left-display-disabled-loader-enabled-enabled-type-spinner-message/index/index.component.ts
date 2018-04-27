@@ -54,16 +54,19 @@ export class IndexComponent implements OnInit, AfterViewInit {
             headerName: "ASIN",
             field: "ASIN",
             suppressSizeToFit: true,
+            pinned: true,
             width: 150
           },
           {
             headerName: "SKU",
             field: "ItemSKU",
+            pinned: true,
             width: 150
           },
           {
             headerName: "Account",
             field: "Account",
+            pinned: true,
             width: 150
           },
           {
