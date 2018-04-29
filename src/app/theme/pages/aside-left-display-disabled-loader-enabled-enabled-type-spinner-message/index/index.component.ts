@@ -42,31 +42,44 @@ export class IndexComponent implements OnInit, AfterViewInit {
             field: "Date",
             width: 200,
             suppressSizeToFit: true,
-            pinned: true,
-            cellRenderer: function (params) {
-              return pad(params.value.getMonth(), 2) + '/' +
-              pad(params.value.getDate() + 1, 2) + '/' +
-              params.value.getFullYear();
-            },
-            filter: "date",
+            // pinned: true,
+            filter: "agDateColumnFilter",
+            filterParams: {
+              comparator: function(filterLocalDateAtMidnight, cellValue) {
+                var dateAsString = cellValue;
+                if (dateAsString == null) return -1;
+                var dateParts = dateAsString.split("-");
+                var cellDate = new Date(Number(dateParts[0]), Number(dateParts[1]) - 1, Number(dateParts[2]));
+                if (filterLocalDateAtMidnight.getTime() == cellDate.getTime()) {
+                  return 0;
+                }
+                if (cellDate < filterLocalDateAtMidnight) {
+                  return -1;
+                }
+                if (cellDate > filterLocalDateAtMidnight) {
+                  return 1;
+                }
+              },
+              browserDatePicker: true
+            }
           },
           {
             headerName: "ASIN",
             field: "ASIN",
             suppressSizeToFit: true,
-            pinned: true,
+            // pinned: true,
             width: 150
           },
           {
             headerName: "SKU",
             field: "ItemSKU",
-            pinned: true,
+            // pinned: true,
             width: 150
           },
           {
             headerName: "Account",
             field: "Account",
-            pinned: true,
+            // pinned: true,
             width: 150
           },
           {
@@ -74,7 +87,7 @@ export class IndexComponent implements OnInit, AfterViewInit {
             field: "Country",
             width: 150,
             cellRenderer: this.countryCellRenderer,
-            pinned: true,
+            // pinned: true,
             filter: "set",
             filterParams: {
               cellRenderer: this.countryCellRenderer,
@@ -359,16 +372,14 @@ export class IndexComponent implements OnInit, AfterViewInit {
       if (res) {
         const data = res.json();
         const temp = [];
-        data.forEach(item => {
-          item['Date'] = new Date(item['Date']);
-          temp.push(item);
+        data.forEach((item, index) => {
+            temp.push(item);
         });
         this.rowData = temp;
         this.gridColumnApi.autoSizeAllColumns();
       }
     });
     this.defaultColDef = {
-      // type: "number",
       enableRowGroup: true,
       enablePivot: true,
       enableValue: true,
